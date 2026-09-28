@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && tsc -p tsconfig.api.json && vite build",
     "preview": "vite preview",
-    "typecheck:api": "tsc -p tsconfig.api.json"
+    "typecheck:api": "tsc -p tsconfig.api.json",
+    "test:db": "node --test \"tests/*.test.mjs\""
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -20,6 +21,7 @@
     "stripe": "^22.6.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

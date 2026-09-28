@@ -4,8 +4,9 @@ import { Logo } from "../components/brand/Logo"
 import { Icon } from "../components/ui/Icon"
 import { transition } from "../motion/tokens"
 import { useCatalog } from "../state/CatalogContext"
-import { useRouter, type AdminView } from "../state/RouterContext"
+import { useRouter, type AccountingView, type AdminView } from "../state/RouterContext"
 import { AuthProvider, useAuth } from "./AuthContext"
+import { AccountingApp } from "./accounting/AccountingApp"
 import { Categories } from "./Categories"
 import { Dashboard } from "./Dashboard"
 import { OrderDetail, Orders } from "./Orders"
@@ -14,23 +15,23 @@ import { ProductsList } from "./ProductsList"
 import { ConfirmProvider, ToastProvider } from "./ui"
 import styles from "./admin.module.css"
 
-export function AdminApp({ view, id }: { view: AdminView; id?: string }) {
+export function AdminApp({ view, id, sub }: { view: AdminView; id?: string; sub?: AccountingView }) {
   return (
     <AuthProvider>
       <ToastProvider>
         <ConfirmProvider>
-          <Gate view={view} id={id} />
+          <Gate view={view} id={id} sub={sub} />
         </ConfirmProvider>
       </ToastProvider>
     </AuthProvider>
   )
 }
 
-function Gate({ view, id }: { view: AdminView; id?: string }) {
+function Gate({ view, id, sub }: { view: AdminView; id?: string; sub?: AccountingView }) {
   const { loading, isAdmin, email } = useAuth()
   if (loading) return <div className={styles.center}>Loading…</div>
   if (!isAdmin) return email ? <NotAdmin /> : <Login />
-  return <Layout view={view} id={id} />
+  return <Layout view={view} id={id} sub={sub} />
 }
 
 const nav: { view: AdminView; label: string; icon: Parameters<typeof Icon>[0]["name"]; hash: string }[] = [
@@ -38,9 +39,10 @@ const nav: { view: AdminView; label: string; icon: Parameters<typeof Icon>[0]["n
   { view: "orders", label: "Orders", icon: "receipt", hash: "#/admin/orders" },
   { view: "products", label: "Products", icon: "box", hash: "#/admin/products" },
   { view: "categories", label: "Categories", icon: "tag", hash: "#/admin/categories" },
+  { view: "accounting", label: "Accounting", icon: "book", hash: "#/admin/accounting" },
 ]
 
-function Layout({ view, id }: { view: AdminView; id?: string }) {
+function Layout({ view, id, sub }: { view: AdminView; id?: string; sub?: AccountingView }) {
   const { mode, email, signOut } = useAuth()
   const { reload, error, clearError } = useCatalog()
   const section = view === "product" ? "products" : view === "order" ? "orders" : view
@@ -112,7 +114,7 @@ function Layout({ view, id }: { view: AdminView; id?: string }) {
         )}
         <AnimatePresence mode="wait" initial={false}>
           <m.div
-            key={`${view}-${id ?? ""}`}
+            key={view === "accounting" ? "accounting" : `${view}-${id ?? ""}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: transition.exit }}
@@ -124,6 +126,7 @@ function Layout({ view, id }: { view: AdminView; id?: string }) {
             {view === "categories" && <Categories />}
             {view === "orders" && <Orders />}
             {view === "order" && <OrderDetail id={id!} />}
+            {view === "accounting" && <AccountingApp sub={sub ?? "journal"} id={id} />}
           </m.div>
         </AnimatePresence>
       </main>

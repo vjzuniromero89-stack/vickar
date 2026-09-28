@@ -8,4 +8,6 @@ export default defineConfig({
   // Never give a secret a VITE_ or NEXT_PUBLIC_ name.
   envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   server: { port: 5180 },
+  // Dev-only accounting preview runs Postgres in the browser (WebAssembly); don't pre-bundle it
+  optimizeDeps: { exclude: ["@electric-sql/pglite"] },
 })
