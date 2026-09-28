@@ -166,11 +166,11 @@ returns void
 language sql
 security definer
 set search_path = public
-as $
+as $$
   update public.products
      set stock = greatest(stock - p_qty, 0), updated_at = now()
    where id = p_id and stock is not null;
-$;
+$$;
 
 revoke execute on function public.decrement_stock(text, int) from public, anon, authenticated;
 
