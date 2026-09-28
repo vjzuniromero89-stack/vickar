@@ -1,4 +1,4 @@
-type IconName = "search" | "close" | "user" | "arrow" | "plus" | "minus" | "lock" | "box" | "tag" | "grid" | "receipt" | "logout" | "edit" | "trash" | "upload" | "external" | "book" | "stack"
+type IconName = "search" | "close" | "user" | "arrow" | "plus" | "minus" | "lock" | "box" | "tag" | "grid" | "receipt" | "logout" | "edit" | "trash" | "upload" | "external" | "book" | "stack" | "chevron" | "reset" | "pause" | "play" | "orbit"
 
 const paths: Record<IconName, string> = {
   search: "M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm4.6-1.9L20 20",
@@ -18,6 +18,11 @@ const paths: Record<IconName, string> = {
   upload: "M12 16V4m0 0L7 9m5-5 5 5M4 20h16",
   external: "M14 4h6v6M20 4l-9 9M18 14v6H4V6h6",
   stack: "M12 3 3 7.5 12 12l9-4.5L12 3Zm-9 9 9 4.5 9-4.5M3 16.5 12 21l9-4.5",
+  chevron: "M9 6l6 6-6 6",
+  reset: "M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4",
+  pause: "M9 5.5v13M15 5.5v13",
+  play: "M8 5.5 18.5 12 8 18.5v-13Z",
+  orbit: "M3.5 12c0-2.1 3.8-3.8 8.5-3.8s8.5 1.7 8.5 3.8-3.8 3.8-8.5 3.8m0 0 2-2m-2 2 2 2",
   book: "M5 5a2 2 0 0 1 2-2h12v15H7a2 2 0 0 0-2 2V5Zm0 15a2 2 0 0 0 2 2h12v-4M9 7h6M9 11h6",
 }
 

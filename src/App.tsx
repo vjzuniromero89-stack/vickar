@@ -77,7 +77,7 @@ function Shell() {
   if (isAdmin) {
     return (
       <Suspense fallback={<p style={{ padding: "2rem" }}>Loading admin…</p>}>
-        <AdminApp view={route.view} id={route.id} />
+        <AdminApp view={route.view} id={route.id} sub={route.sub} />
       </Suspense>
     )
   }

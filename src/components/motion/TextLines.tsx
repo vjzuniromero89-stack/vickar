@@ -1,12 +1,11 @@
 import { m, useReducedMotion } from "motion/react"
-import type { ElementType } from "react"
 import { duration, ease, inView, stagger } from "../../motion/tokens"
 import styles from "./TextLines.module.css"
 
 type TextLinesProps = {
   /** Explicit line breaks — art-directed, never auto-split. */
   lines: string[]
-  as?: ElementType
+  as?: "h1" | "h2" | "h3" | "p" | "span"
   id?: string
   className?: string
   delay?: number

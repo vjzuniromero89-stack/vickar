@@ -21,6 +21,7 @@
   --ember-600: #ff6428;
   --blueprint-300: #8fd8ff;
   --lime-400: #c6f432;
+  --gold-300: #e3c48f;
 
   /* ---- Primitives: type ---- */
   --font-sans: "Instrument Sans Variable", "Helvetica Neue", Arial, sans-serif;
@@ -46,6 +47,7 @@
   --c-glass: rgb(17 19 22 / 0.62);
   --c-focus: var(--ember-500);
   --c-success: var(--lime-400);
+  --c-gold: var(--gold-300);             /* showroom trims & labels, ≈11:1 on bg */
 
   /* ---- Semantic: fluid type (375 → 1440) ---- */
   --fs-mega: clamp(3.25rem, 1.4rem + 7.9vw, 8.75rem);
