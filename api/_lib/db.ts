@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
-import { env } from "./http.js"
+import { env, optionalEnv } from "./http.js"
 
 let client: SupabaseClient | null = null
 
@@ -9,7 +9,7 @@ let client: SupabaseClient | null = null
  */
 export function db() {
   if (!client) {
-    client = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
+    client = createClient(env("SUPABASE_URL"), optionalEnv("SUPABASE_SECRET_KEY") ?? env("SUPABASE_SERVICE_ROLE_KEY"), {
       auth: { persistSession: false, autoRefreshToken: false },
     })
   }

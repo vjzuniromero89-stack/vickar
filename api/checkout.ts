@@ -14,6 +14,7 @@ import { getRates } from "./_lib/shipping.js"
  */
 export function POST(request: Request) {
   return handle(async () => {
+    const payments = stripe() // fails fast (clear 500) if Stripe isn't configured — before any order is written
     const body = await readJson<{ items: CartItemInput[]; address: Partial<Address>; rateId: string }>(request)
     const address = validateAddress(body.address)
     const { lines, subtotal } = await priceCart(body.items)
@@ -46,7 +47,7 @@ export function POST(request: Request) {
     if (error) throw new Error(error.message)
 
     const site = siteUrl(request)
-    const session = await stripe().checkout.sessions.create({
+    const session = await payments.checkout.sessions.create({
       mode: "payment",
       customer_email: address.email,
       client_reference_id: order.id,
