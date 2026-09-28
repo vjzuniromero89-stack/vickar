@@ -6,6 +6,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
  */
 export type AdminView = "dashboard" | "products" | "product" | "categories" | "orders" | "order" | "inventory" | "accounting"
 
+/** Screens of the double-entry accounting UI (src/admin/accounting, used by the dev preview). */
+export type AccountingView = "journal" | "new-entry" | "entry" | "ledger" | "trial-balance" | "accounts" | "periods" | "audit"
+
 export type Route =
   | { name: "home" }
   | { name: "product"; id: string }
