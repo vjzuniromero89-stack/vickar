@@ -119,7 +119,7 @@ export function OrderDetail({ id }: { id: string }) {
   const { orders, reload } = useOrders()
   const toast = useToast()
   const order = orders?.find((o) => o.id === id)
-  const [form, setForm] = useState({ status: "paid" as OrderStatus, tracking_number: "", tracking_url: "", notes: "" })
+  const [form, setForm] = useState({ status: "paid" as OrderStatus, tracking_number: "", tracking_url: "", notes: "", shipping_cost: "" })
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -129,6 +129,7 @@ export function OrderDetail({ id }: { id: string }) {
         tracking_number: order.tracking_number ?? "",
         tracking_url: order.tracking_url ?? "",
         notes: order.notes ?? "",
+        shipping_cost: order.shipping_cost ? String(order.shipping_cost) : "",
       })
   }, [order])
 
@@ -152,6 +153,7 @@ export function OrderDetail({ id }: { id: string }) {
         tracking_number: form.tracking_number || null,
         tracking_url: form.tracking_url || null,
         notes: form.notes || null,
+        shipping_cost: Math.max(0, Math.round(Number(form.shipping_cost || 0) * 100) / 100),
       })
       toast(`${order.number} updated`)
       reload()
@@ -233,6 +235,17 @@ export function OrderDetail({ id }: { id: string }) {
                 <label htmlFor="od-tn">Tracking number</label>
                 <input id="od-tn" value={form.tracking_number} onChange={(e) => setForm({ ...form, tracking_number: e.target.value })} />
               </div>
+            </div>
+            <div className={styles.field}>
+              <label htmlFor="od-sc">Shipping label cost (what you paid the carrier)</label>
+              <input
+                id="od-sc"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={form.shipping_cost}
+                onChange={(e) => setForm({ ...form, shipping_cost: e.target.value })}
+              />
+              <p className={styles.hint}>Counts as a cost in Accounting, so each order shows its real profit.</p>
             </div>
             <div className={styles.field}>
               <label htmlFor="od-tu">Tracking link</label>

@@ -25,7 +25,7 @@ export function POST(request: Request) {
     const body = await readJson<{ items: CartItemInput[]; address: Partial<Address>; rateId: string }>(request)
     // The account email is the order email — never trust one sent by the browser
     const address = validateAddress({ ...body.address, email: user.email })
-    const { lines, subtotal } = await priceCart(body.items)
+    const { lines, subtotal, cogs } = await priceCart(body.items)
 
     const rates = await getRates(address, lines, subtotal)
     const rate = rates.find((r) => r.id === body.rateId)
@@ -46,6 +46,7 @@ export function POST(request: Request) {
         shipping_address: address,
         items: lines,
         subtotal,
+        cogs,
         shipping: rate.amount,
         total,
         currency: "usd",

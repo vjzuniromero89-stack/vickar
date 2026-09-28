@@ -103,6 +103,9 @@ type ProductRow = {
   image_alt: string | null
   published: boolean
   stock: number | null
+  sku: string | null
+  unit_cost: number
+  low_stock_alert: number
   weight_kg: number
   length_cm: number
   width_cm: number
@@ -136,6 +139,9 @@ const toProduct = (r: ProductRow): Product => ({
   imageAlt: r.image_alt ?? undefined,
   published: r.published,
   stock: r.stock,
+  sku: r.sku ?? undefined,
+  unitCost: Number(r.unit_cost ?? 0),
+  lowStockAlert: r.low_stock_alert ?? 2,
   weightKg: Number(r.weight_kg),
   lengthCm: Number(r.length_cm),
   widthCm: Number(r.width_cm),
@@ -143,7 +149,8 @@ const toProduct = (r: ProductRow): Product => ({
   hsCode: r.hs_code ?? undefined,
 })
 
-const fromProduct = (p: Product): ProductRow => ({
+// Stock is intentionally NOT written from here: in Supabase it is derived from inventory movements.
+const fromProduct = (p: Product): Omit<ProductRow, "stock"> => ({
   id: p.id,
   name: p.name,
   category: p.category,
@@ -159,7 +166,9 @@ const fromProduct = (p: Product): ProductRow => ({
   image: p.image ?? null,
   image_alt: p.imageAlt ?? null,
   published: p.published,
-  stock: p.stock ?? null,
+  sku: p.sku?.trim() || null,
+  unit_cost: p.unitCost ?? 0,
+  low_stock_alert: p.lowStockAlert ?? 2,
   weight_kg: p.weightKg ?? 0.5,
   length_cm: p.lengthCm ?? 10,
   width_cm: p.widthCm ?? 10,

@@ -21,7 +21,7 @@ export function Dashboard() {
   const paidRecent = recent.filter((o) => ["paid", "shipped", "delivered"].includes(o.status))
   const revenue = paidRecent.reduce((n, o) => n + o.total, 0)
   const toShip = (orders ?? []).filter((o) => o.status === "paid").length
-  const lowStock = products.filter((p) => p.stock != null && p.stock <= 5)
+  const lowStock = products.filter((p) => p.stock != null && p.stock <= (p.lowStockAlert ?? 2))
 
   const stats = [
     { label: "Revenue · 30 days", value: ordersApi.available ? formatPrice(revenue) : "—" },
@@ -29,7 +29,7 @@ export function Dashboard() {
     { label: "To ship", value: ordersApi.available ? String(toShip) : "—", href: "#/admin/orders" },
     { label: "Products", value: `${products.filter((p) => p.published).length} live / ${products.length}`, href: "#/admin/products" },
     { label: "Categories", value: String(categories.length), href: "#/admin/categories" },
-    { label: "Low stock (≤5)", value: String(lowStock.length) },
+    { label: "Low stock", value: String(lowStock.length), href: "#/admin/inventory" },
   ]
 
   return (
@@ -107,7 +107,7 @@ export function Dashboard() {
             </h2>
           </div>
           {lowStock.length === 0 ? (
-            <p className="t-soft t-small">Nothing running low. Products without a stock number are unlimited.</p>
+            <p className="t-soft t-small">Nothing running low. Each product warns at its own low-stock alert.</p>
           ) : (
             <ul className={styles.list}>
               {lowStock.map((p) => (

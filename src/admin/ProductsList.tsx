@@ -2,7 +2,7 @@ import { AnimatePresence, m, useReducedMotion } from "motion/react"
 import { useMemo, useState } from "react"
 import { ProductVisual } from "../components/product/ProductVisual"
 import { Icon } from "../components/ui/Icon"
-import { formatPrice, type Product } from "../data/catalog"
+import { formatMoney, formatPrice, type Product } from "../data/catalog"
 import { spring, transition } from "../motion/tokens"
 import { useCatalog } from "../state/CatalogContext"
 import { Pill, Switch, useConfirm, useToast } from "./ui"
@@ -130,12 +130,16 @@ export function ProductsList() {
                 <span className={styles.rowName}>
                   <a href={`#/admin/products/${p.id}`}>{p.name}</a>
                   <span className="t-small t-soft">
+                    {p.sku ? `${p.sku} · ` : ""}
                     {p.swatches.length} colour{p.swatches.length === 1 ? "" : "s"}
                     {p.badge ? ` · ${p.badge}` : ""}
                   </span>
                 </span>
                 <span className={`t-small ${styles.cellCat}`}>{categoryLabel(p.category)}</span>
-                <span>{formatPrice(p.price)}</span>
+                <span className={styles.priceCell}>
+                  {formatPrice(p.price)}
+                  <span className="t-small t-soft">{p.unitCost ? `cost ${formatMoney(p.unitCost)}` : "no cost"}</span>
+                </span>
                 <span>
                   {p.stock == null ? (
                     <span className="t-soft t-small">∞</span>

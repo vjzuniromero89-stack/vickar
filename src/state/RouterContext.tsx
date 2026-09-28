@@ -4,9 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
  * Minimal hash router — works on any static host (Vercel, no rewrites needed).
  * Plain anchors like `#shop` keep working and resolve to the home route.
  */
-export type AdminView = "dashboard" | "products" | "product" | "categories" | "orders" | "order" | "accounting"
-
-export type AccountingView = "journal" | "entry" | "new-entry" | "ledger" | "trial-balance" | "accounts" | "periods" | "audit"
+export type AdminView = "dashboard" | "products" | "product" | "categories" | "orders" | "order" | "inventory" | "accounting"
 
 export type Route =
   | { name: "home" }
@@ -14,7 +12,7 @@ export type Route =
   | { name: "checkout" }
   | { name: "order" }
   | { name: "account" }
-  | { name: "admin"; view: AdminView; id?: string; sub?: AccountingView }
+  | { name: "admin"; view: AdminView; id?: string }
 
 const parse = (hash: string): Route => {
   let m: RegExpMatchArray | null
@@ -22,18 +20,12 @@ const parse = (hash: string): Route => {
   if (hash.startsWith("#/checkout")) return { name: "checkout" }
   if (hash.startsWith("#/order")) return { name: "order" }
   if (hash.startsWith("#/account")) return { name: "account" }
-  if (hash.startsWith("#/admin/accounting")) {
-    if (hash.startsWith("#/admin/accounting/journal/new")) return { name: "admin", view: "accounting", sub: "new-entry" }
-    if ((m = hash.match(/^#\/admin\/accounting\/journal\/([\w-]+)/))) return { name: "admin", view: "accounting", sub: "entry", id: m[1] }
-    if ((m = hash.match(/^#\/admin\/accounting\/ledger(?:\/([\w-]+))?/))) return { name: "admin", view: "accounting", sub: "ledger", id: m[1] }
-    const sub = hash.split("/")[3] as AccountingView | undefined
-    const known: AccountingView[] = ["journal", "trial-balance", "accounts", "periods", "audit"]
-    return { name: "admin", view: "accounting", sub: sub && known.includes(sub) ? sub : "journal" }
-  }
   if (hash.startsWith("#/admin")) {
     if ((m = hash.match(/^#\/admin\/products\/([\w-]+)/))) return { name: "admin", view: "product", id: m[1] }
     if (hash.startsWith("#/admin/products")) return { name: "admin", view: "products" }
     if (hash.startsWith("#/admin/categories")) return { name: "admin", view: "categories" }
+    if (hash.startsWith("#/admin/inventory")) return { name: "admin", view: "inventory" }
+    if (hash.startsWith("#/admin/accounting")) return { name: "admin", view: "accounting" }
     if ((m = hash.match(/^#\/admin\/orders\/([\w-]+)/))) return { name: "admin", view: "order", id: m[1] }
     if (hash.startsWith("#/admin/orders")) return { name: "admin", view: "orders" }
     return { name: "admin", view: "dashboard" }
@@ -77,4 +69,4 @@ export function useRouter() {
 
 /** Stable key per page, for page transitions and scroll reset. */
 export const routeKey = (r: Route) =>
-  r.name === "product" ? `p-${r.id}` : r.name === "admin" ? `admin-${r.view}-${r.sub ?? ""}-${r.id ?? ""}` : r.name
+  r.name === "product" ? `p-${r.id}` : r.name === "admin" ? `admin-${r.view}-${r.id ?? ""}` : r.name

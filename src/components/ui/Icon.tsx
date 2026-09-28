@@ -1,4 +1,4 @@
-type IconName = "search" | "close" | "user" | "arrow" | "plus" | "minus" | "lock" | "box" | "tag" | "grid" | "receipt" | "logout" | "edit" | "trash" | "upload" | "external" | "book"
+type IconName = "search" | "close" | "user" | "arrow" | "plus" | "minus" | "lock" | "box" | "tag" | "grid" | "receipt" | "logout" | "edit" | "trash" | "upload" | "external" | "book" | "stack"
 
 const paths: Record<IconName, string> = {
   search: "M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm4.6-1.9L20 20",
@@ -17,6 +17,7 @@ const paths: Record<IconName, string> = {
   trash: "M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13",
   upload: "M12 16V4m0 0L7 9m5-5 5 5M4 20h16",
   external: "M14 4h6v6M20 4l-9 9M18 14v6H4V6h6",
+  stack: "M12 3 3 7.5 12 12l9-4.5L12 3Zm-9 9 9 4.5 9-4.5M3 16.5 12 21l9-4.5",
   book: "M5 5a2 2 0 0 1 2-2h12v15H7a2 2 0 0 0-2 2V5Zm0 15a2 2 0 0 0 2 2h12v-4M9 7h6M9 11h6",
 }
 

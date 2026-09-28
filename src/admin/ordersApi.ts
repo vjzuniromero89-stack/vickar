@@ -28,6 +28,7 @@ export type AdminOrder = {
   tracking_number: string | null
   tracking_url: string | null
   notes: string | null
+  shipping_cost: number
   paid_at: string | null
   created_at: string
 }
@@ -39,9 +40,9 @@ export const ordersApi = {
     if (!supabase) return []
     const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(500)
     if (error) throw new Error(error.message)
-    return (data ?? []).map((o) => ({ ...o, subtotal: Number(o.subtotal), shipping: Number(o.shipping), total: Number(o.total) }))
+    return (data ?? []).map((o) => ({ ...o, subtotal: Number(o.subtotal), shipping: Number(o.shipping), total: Number(o.total), shipping_cost: Number(o.shipping_cost ?? 0) }))
   },
-  async update(id: string, patch: Partial<Pick<AdminOrder, "status" | "tracking_number" | "tracking_url" | "notes">>) {
+  async update(id: string, patch: Partial<Pick<AdminOrder, "status" | "tracking_number" | "tracking_url" | "notes" | "shipping_cost">>) {
     if (!supabase) return
     const { error } = await supabase.from("orders").update({ ...patch, updated_at: new Date().toISOString() }).eq("id", id)
     if (error) throw new Error(error.message)

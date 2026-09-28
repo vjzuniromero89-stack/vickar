@@ -22,6 +22,8 @@ export type PricedLine = {
   colorName: string
   qty: number
   unitPrice: number
+  /** Product cost at the moment of sale (manual unit cost) — later cost changes never alter this */
+  unitCost: number
   weightKg: number
   lengthCm: number
   widthCm: number
@@ -34,14 +36,14 @@ export type PricedLine = {
  * The browser only says *what* it wants. Prices, names, availability and stock are always
  * re-read from the database here, so a tampered cart can't change what the customer pays.
  */
-export async function priceCart(items: CartItemInput[]): Promise<{ lines: PricedLine[]; subtotal: number }> {
+export async function priceCart(items: CartItemInput[]): Promise<{ lines: PricedLine[]; subtotal: number; cogs: number }> {
   if (!Array.isArray(items) || items.length === 0) throw new HttpError(400, "Your bag is empty.")
   if (items.length > 50) throw new HttpError(400, "Too many items in one order.")
 
   const ids = [...new Set(items.map((i) => String(i.productId)))]
   const { data, error } = await db()
     .from("products")
-    .select("id, name, price, published, swatches, stock, weight_kg, length_cm, width_cm, height_cm, hs_code, image")
+    .select("id, name, price, unit_cost, published, swatches, stock, weight_kg, length_cm, width_cm, height_cm, hs_code, image")
     .in("id", ids)
   if (error) throw new Error(error.message)
 
@@ -63,6 +65,7 @@ export async function priceCart(items: CartItemInput[]): Promise<{ lines: Priced
       colorName: swatch.name,
       qty,
       unitPrice: Number(p.price),
+      unitCost: Number(p.unit_cost ?? 0),
       weightKg: Number(p.weight_kg),
       lengthCm: Number(p.length_cm),
       widthCm: Number(p.width_cm),
@@ -80,7 +83,8 @@ export async function priceCart(items: CartItemInput[]): Promise<{ lines: Priced
   }
 
   const subtotal = round2(lines.reduce((n, l) => n + l.unitPrice * l.qty, 0))
-  return { lines, subtotal }
+  const cogs = round2(lines.reduce((n, l) => n + l.unitCost * l.qty, 0))
+  return { lines, subtotal, cogs }
 }
 
 export function validateAddress(a: Partial<Address> | undefined): Address {

@@ -48,8 +48,13 @@ export type Product = {
   imageAlt?: string
   /** Hidden from the storefront when false. */
   published: boolean
-  /** Units available; undefined/null = unlimited. */
+  /** Units available — calculated from Inventory movements (read-only here); null = not tracked. */
   stock?: number | null
+  sku?: string
+  /** What one unit costs you (entered manually). Each sale keeps the cost it had at that moment. */
+  unitCost?: number
+  /** Warn when stock falls to this number or below. */
+  lowStockAlert?: number
   /** Shipping: packed weight (kg), box (cm) and customs HS code — used for carrier rates. */
   weightKg?: number
   lengthCm?: number
@@ -242,3 +247,7 @@ export const seedProducts: Product[] = [
 
 export const formatPrice = (value: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value)
+
+/** Two-decimal money for costs, margins and accounting (prices in the store stay rounded). */
+export const formatMoney = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)

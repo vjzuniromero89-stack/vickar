@@ -2,7 +2,7 @@ import { AnimatePresence, m, useReducedMotion } from "motion/react"
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react"
 import { ProductCard } from "../components/product/ProductCard"
 import { Icon } from "../components/ui/Icon"
-import { artKinds, badges, type Product } from "../data/catalog"
+import { artKinds, badges, formatMoney, type Product } from "../data/catalog"
 import { spring, transition } from "../motion/tokens"
 import { makeId, useCatalog } from "../state/CatalogContext"
 import { useRouter } from "../state/RouterContext"
@@ -24,6 +24,9 @@ const blank = (category: string): Product => ({
   art: "box",
   published: false,
   stock: null,
+  sku: "",
+  unitCost: 0,
+  lowStockAlert: 2,
   weightKg: 0.5,
   lengthCm: 10,
   widthCm: 10,
@@ -193,10 +196,22 @@ export function ProductEditor({ id }: { id: string }) {
             <h2 id="pe-basics" className="t-h3">
               Basics
             </h2>
-            <div className={styles.field}>
-              <label htmlFor="pe-name">Name</label>
-              <input id="pe-name" value={draft.name} onChange={(e) => set("name", e.target.value)} {...aria("name")} />
-              {err("name")}
+            <div className={styles.formRow}>
+              <div className={styles.field}>
+                <label htmlFor="pe-name">Name</label>
+                <input id="pe-name" value={draft.name} onChange={(e) => set("name", e.target.value)} {...aria("name")} />
+                {err("name")}
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="pe-sku">SKU</label>
+                <input
+                  id="pe-sku"
+                  value={draft.sku ?? ""}
+                  onChange={(e) => set("sku", e.target.value.toUpperCase())}
+                  placeholder="e.g. ARC-750-GRA"
+                  autoCapitalize="characters"
+                />
+              </div>
             </div>
             <div className={styles.formRow}>
               <div className={styles.field}>
@@ -266,6 +281,30 @@ export function ProductEditor({ id }: { id: string }) {
                   {...aria("compareAt")}
                 />
                 {err("compareAt") ?? <p className={styles.hint}>Shown crossed out, for sales.</p>}
+              </div>
+            </div>
+            <div className={styles.formRow}>
+              <div className={styles.field}>
+                <label htmlFor="pe-unitCost">Unit cost (USD)</label>
+                <input
+                  id="pe-unitCost"
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="0.01"
+                  value={draft.unitCost ?? ""}
+                  onChange={(e) => set("unitCost", num(e.target.value))}
+                />
+                <p className={styles.hint}>What one unit costs you (product + freight + duties). Past sales keep the cost they had.</p>
+              </div>
+              <div className={styles.field}>
+                <span className={styles.fieldLabel}>Margin per unit</span>
+                <p className={styles.marginValue} data-negative={draft.price - (draft.unitCost ?? 0) < 0}>
+                  {draft.unitCost
+                    ? `${formatMoney(draft.price - draft.unitCost)} · ${draft.price > 0 ? Math.round(((draft.price - draft.unitCost) / draft.price) * 100) : 0}%`
+                    : "Add a unit cost to see it"}
+                </p>
+                <p className={styles.hint}>Before Stripe fees and shipping.</p>
               </div>
             </div>
           </section>
@@ -426,18 +465,29 @@ export function ProductEditor({ id }: { id: string }) {
             </h2>
             <div className={styles.formRow}>
               <div className={styles.field}>
-                <label htmlFor="pe-stock">Stock</label>
+                <span className={styles.fieldLabel}>Current stock</span>
+                <p className={styles.stockValue}>
+                  {draft.stock == null ? "Not tracked yet" : `${draft.stock} unit${draft.stock === 1 ? "" : "s"}`}
+                </p>
+                <p className={styles.hint}>
+                  Stock changes only through <a href="#/admin/inventory">Inventory</a> movements, so every unit has a history. Sales deduct it
+                  automatically.
+                </p>
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="pe-lowStock">Low stock alert</label>
                 <input
-                  id="pe-stock"
+                  id="pe-lowStock"
                   type="number"
                   min="0"
                   step="1"
-                  placeholder="Unlimited"
-                  value={draft.stock ?? ""}
-                  onChange={(e) => set("stock", e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))))}
+                  value={draft.lowStockAlert ?? 2}
+                  onChange={(e) => set("lowStockAlert", Math.max(0, Math.floor(Number(e.target.value) || 0)))}
                 />
-                <p className={styles.hint}>Leave empty for unlimited. Deducted automatically when an order is paid.</p>
+                <p className={styles.hint}>Warn on the dashboard at this many units or fewer.</p>
               </div>
+            </div>
+            <div className={styles.formRow}>
               <div className={styles.field}>
                 <label htmlFor="pe-weightKg">Packed weight (kg)</label>
                 <input

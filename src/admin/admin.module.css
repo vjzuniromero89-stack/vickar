@@ -913,3 +913,30 @@ a.listRow:hover {
   gap: var(--space-1);
   margin-top: var(--space-1);
 }
+
+/* ---------- Product editor: read-only values ---------- */
+.fieldLabel {
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.stockValue,
+.marginValue {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 0.9rem;
+  border-radius: var(--radius-m);
+  border: var(--hairline) dashed var(--c-line-strong);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.marginValue[data-negative="true"] {
+  color: #ff9b9b;
+}
+
+.priceCell {
+  display: grid !important;
+  line-height: 1.3;
+}
