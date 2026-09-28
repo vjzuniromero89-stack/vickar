@@ -13,12 +13,11 @@ export function POST(request: Request) {
   return handle(async () => {
     const signature = request.headers.get("stripe-signature")
     if (!signature) throw new HttpError(400, "Missing Stripe signature.")
-    const secret = env("STRIPE_WEBHOOK_SECRET") // outside the try: a missing secret is a config error, not a bad signature
     const raw = await request.text()
 
     let event: Stripe.Event
     try {
-      event = await stripe().webhooks.constructEventAsync(raw, signature, secret)
+      event = await stripe().webhooks.constructEventAsync(raw, signature, env("STRIPE_WEBHOOK_SECRET"))
     } catch {
       throw new HttpError(400, "Invalid Stripe signature.")
     }
