@@ -3,6 +3,7 @@ import { useState } from "react"
 import { spring, transition } from "../../motion/tokens"
 import { useBag } from "../../state/BagContext"
 import { useCatalog } from "../../state/CatalogContext"
+import { useSession } from "../../state/SessionContext"
 import { useShop } from "../../state/ShopContext"
 import { Logo } from "../brand/Logo"
 import { Icon } from "../ui/Icon"
@@ -18,6 +19,8 @@ export function Header({ menuOpen, onToggleMenu, onSearch }: HeaderProps) {
   const { count, open: openBag, isOpen: bagOpen } = useBag()
   const { shop } = useShop()
   const { categories, published } = useCatalog()
+  const session = useSession()
+  const firstName = session.name.split(" ")[0]
   const liveCategories = categories.filter((c) => published.some((p) => p.category === c.id))
   const { scrollY } = useScroll()
   const reduced = useReducedMotion()
@@ -68,6 +71,18 @@ export function Header({ menuOpen, onToggleMenu, onSearch }: HeaderProps) {
               /
             </kbd>
           </button>
+          {session.enabled && (
+            <a
+              href="#/account"
+              className={styles.account}
+              aria-label={session.user ? `Your account, ${firstName}` : "Sign in"}
+            >
+              <Icon name="user" size={18} />
+              <span className={styles.accountText} aria-hidden="true">
+                {session.user ? firstName : "Sign in"}
+              </span>
+            </a>
+          )}
           <button
             type="button"
             className={styles.bag}

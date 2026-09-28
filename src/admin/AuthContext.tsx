@@ -1,6 +1,6 @@
-import type { Session } from "@supabase/supabase-js"
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 import { backendMode, supabase } from "../lib/supabase"
+import { useSession } from "../state/SessionContext"
 
 type AuthValue = {
   mode: "demo" | "supabase"
@@ -16,66 +16,55 @@ type AuthValue = {
 const AuthContext = createContext<AuthValue | null>(null)
 
 /**
- * Admin authentication.
- * - Supabase mode: email + password via Supabase Auth; admin rights come from the `admins` table,
- *   and every write is re-checked by Row Level Security on the server.
- * - Demo mode (no Supabase env vars): open access with a warning banner — for local design work only.
+ * Admin access on top of the app-wide session.
+ * - Supabase mode: admin rights come from the `admins` table, and every write is re-checked
+ *   by Row Level Security on the server.
+ * - Demo mode (no Supabase env vars): open access with a warning banner — local design work only.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null)
-  const [isAdmin, setIsAdmin] = useState(backendMode === "demo")
-  const [loading, setLoading] = useState(backendMode === "supabase")
+  const session = useSession()
+  const userId = session.user?.id
+  const [adminCheck, setAdminCheck] = useState<{ userId: string; isAdmin: boolean } | null>(null)
 
   useEffect(() => {
-    if (!supabase) return
-    const check = async (s: Session | null) => {
-      setSession(s)
-      if (!s) {
-        setIsAdmin(false)
-        setLoading(false)
-        return
-      }
-      const { data } = await supabase!.from("admins").select("user_id").eq("user_id", s.user.id).maybeSingle()
-      setIsAdmin(Boolean(data))
-      setLoading(false)
+    if (!supabase || !userId) return
+    let cancelled = false
+    supabase
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setAdminCheck({ userId, isAdmin: Boolean(data) })
+      })
+    return () => {
+      cancelled = true
     }
-    supabase.auth.getSession().then(({ data }) => check(data.session))
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      void check(s)
-    })
-    return () => sub.subscription.unsubscribe()
-  }, [])
+  }, [userId])
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    if (!supabase) return null
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return error ? "Email or password is incorrect." : null
-  }, [])
-
-  const sendReset = useCallback(async (email: string) => {
-    if (!supabase) return null
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/#/admin`,
-    })
-    return error ? error.message : null
-  }, [])
-
-  const signOut = useCallback(async () => {
-    await supabase?.auth.signOut()
-  }, [])
-
-  const value = useMemo<AuthValue>(
-    () => ({
-      mode: backendMode,
-      loading,
-      email: backendMode === "demo" ? "demo@vickar.local" : (session?.user.email ?? null),
-      isAdmin,
-      signIn,
-      sendReset,
-      signOut,
-    }),
-    [loading, session, isAdmin, signIn, sendReset, signOut],
-  )
+  const value = useMemo<AuthValue>(() => {
+    if (backendMode === "demo") {
+      return {
+        mode: "demo",
+        loading: false,
+        email: "demo@vickar.local",
+        isAdmin: true,
+        signIn: async () => null,
+        sendReset: async () => null,
+        signOut: async () => {},
+      }
+    }
+    const checked = adminCheck?.userId === userId
+    return {
+      mode: "supabase",
+      loading: session.loading || (Boolean(userId) && !checked),
+      email: session.user?.email ?? null,
+      isAdmin: Boolean(userId) && checked && adminCheck!.isAdmin,
+      signIn: async (email, password) => (await session.signIn(email, password)).error,
+      sendReset: async (email) => (await session.sendReset(email)).error,
+      signOut: session.signOut,
+    }
+  }, [session, userId, adminCheck])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

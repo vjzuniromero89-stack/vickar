@@ -17,8 +17,17 @@ const key = (env.VITE_SUPABASE_PUBLISHABLE_KEY ??
   env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
   env.NEXT_PUBLIC_SUPABASE_ANON_KEY) as string | undefined
 
-export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null
+/**
+ * PKCE flow: email links (confirm account, reset password) come back as `?code=…` in the query
+ * string, which doesn't collide with the app's `#/…` hash routes. supabase-js exchanges the code
+ * for a session automatically on load.
+ */
+export const supabase: SupabaseClient | null =
+  url && key ? createClient(url, key, { auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true } }) : null
 
 export const backendMode: "supabase" | "demo" = supabase ? "supabase" : "demo"
 
 export const IMAGE_BUCKET = "product-images"
+
+/** Where email links land. Query (not hash) so the auth code survives; the app routes from there. */
+export const authRedirect = (intent: "welcome" | "reset") => `${window.location.origin}/?auth=${intent}`

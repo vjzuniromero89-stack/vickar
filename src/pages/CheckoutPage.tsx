@@ -1,5 +1,6 @@
 import { AnimatePresence, m, useReducedMotion } from "motion/react"
 import { useEffect, useMemo, useState, type FormEvent } from "react"
+import { AuthPanel } from "../components/account/AuthPanel"
 import { ProductVisual } from "../components/product/ProductVisual"
 import { Icon } from "../components/ui/Icon"
 import { countries, needsState } from "../data/countries"
@@ -7,6 +8,7 @@ import { formatPrice } from "../data/catalog"
 import { api, ApiError, type Address, type ShippingRate } from "../lib/api"
 import { stagger, transition } from "../motion/tokens"
 import { useBag } from "../state/BagContext"
+import { useSession } from "../state/SessionContext"
 import { useShop } from "../state/ShopContext"
 import styles from "./CheckoutPage.module.css"
 
@@ -42,6 +44,7 @@ function validate(a: Address): Errors {
 export function CheckoutPage() {
   const { lines, subtotal } = useBag()
   const { shop } = useShop()
+  const session = useSession()
   const reduced = useReducedMotion()
   const [address, setAddress] = useState<Address>(loadAddress)
   const [errors, setErrors] = useState<Errors>({})
@@ -52,8 +55,22 @@ export function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
 
   const items = useMemo(() => lines.map((l) => ({ productId: l.productId, color: l.color, qty: l.qty })), [lines])
+  const needsAccount = session.enabled && !session.user
   const rate = rates.find((r) => r.id === rateId)
   const total = subtotal + (rate?.amount ?? 0)
+
+  // Signed in: the account email is the order email; prefill name + saved address
+  const userEmail = session.user?.email ?? ""
+  useEffect(() => {
+    if (!userEmail) return
+    setAddress((a) => ({
+      ...a,
+      ...(a.line1 ? {} : session.savedAddress),
+      name: a.name || session.savedAddress?.name || session.name,
+      email: userEmail,
+    }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEmail])
 
   // Any cart change invalidates quoted rates
   useEffect(() => {
@@ -84,6 +101,7 @@ export function CheckoutPage() {
         /* optional convenience */
       }
       const res = await api.shippingRates(items, address)
+      void session.saveAddress(address) // remembered for next time (account metadata)
       setRates(res.rates)
       setRateId(res.rates[0]?.id ?? "")
       setStep(2)
@@ -99,7 +117,7 @@ export function CheckoutPage() {
     setBusy("pay")
     setError(null)
     try {
-      const { url } = await api.checkout(items, address, rateId)
+      const { url } = await api.checkout(items, address, rateId, await session.accessToken())
       window.location.assign(url) // Stripe-hosted payment page
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't start the payment.")
@@ -153,6 +171,14 @@ export function CheckoutPage() {
 
       <div className={styles.layout}>
         <div className={styles.main}>
+          {needsAccount ? (
+            <AuthPanel
+              title="Sign in to check out"
+              subtitle="Your bag is saved. With an account you can track this order and see every purchase in one place."
+              initialMode="signup"
+            />
+          ) : (
+          <>
           <form className={styles.card} onSubmit={onContinue} noValidate>
             <div className={styles.cardHead}>
               <h2 className="t-h3">Contact & shipping address</h2>
@@ -163,7 +189,13 @@ export function CheckoutPage() {
               )}
             </div>
             <div className={styles.grid}>
-              {field("email", "Email", { type: "email", autoComplete: "email", inputMode: "email", className: styles.full })}
+              {field("email", session.user ? "Email (your account)" : "Email", {
+                type: "email",
+                autoComplete: "email",
+                inputMode: "email",
+                className: styles.full,
+                readOnly: Boolean(session.user),
+              })}
               {field("name", "Full name", { autoComplete: "name" })}
               {field("phone", "Phone (optional, for the courier)", { type: "tel", autoComplete: "tel" })}
               <div className={`${styles.field} ${styles.full}`}>
@@ -239,6 +271,9 @@ export function CheckoutPage() {
               </m.section>
             )}
           </AnimatePresence>
+
+          </>
+          )}
 
           <AnimatePresence>
             {error && (

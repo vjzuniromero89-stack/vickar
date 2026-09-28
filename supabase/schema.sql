@@ -160,6 +160,16 @@ drop policy if exists "admins update orders" on public.orders;
 create policy "admins update orders" on public.orders
   for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
+-- Customer accounts: each order belongs to the customer who placed it
+alter table public.orders
+  add column if not exists user_id uuid references auth.users(id) on delete set null;
+
+create index if not exists orders_user_idx on public.orders (user_id, created_at desc);
+
+drop policy if exists "customers read own orders" on public.orders;
+create policy "customers read own orders" on public.orders
+  for select to authenticated using (user_id = auth.uid());
+
 -- Atomically deduct stock when an order is paid (called by the Stripe webhook with the service role)
 create or replace function public.decrement_stock(p_id text, p_qty int)
 returns void

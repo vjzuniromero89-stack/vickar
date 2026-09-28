@@ -9,11 +9,13 @@ import { MotionProvider } from "./motion/MotionProvider"
 import { transition } from "./motion/tokens"
 import { CheckoutPage } from "./pages/CheckoutPage"
 import { Home } from "./pages/Home"
+import { AccountPage } from "./pages/AccountPage"
 import { OrderPage } from "./pages/OrderPage"
 import { ProductPage } from "./pages/ProductPage"
 import { BagProvider } from "./state/BagContext"
 import { CatalogProvider } from "./state/CatalogContext"
 import { RouterProvider, routeKey, useRouter } from "./state/RouterContext"
+import { SessionProvider } from "./state/SessionContext"
 import { ShopProvider } from "./state/ShopContext"
 
 // The admin is only downloaded by people who open #/admin
@@ -23,6 +25,7 @@ export function App() {
   return (
     <MotionProvider>
       <RouterProvider>
+        <SessionProvider>
         <CatalogProvider>
           <ShopProvider>
             <BagProvider>
@@ -30,6 +33,7 @@ export function App() {
             </BagProvider>
           </ShopProvider>
         </CatalogProvider>
+        </SessionProvider>
       </RouterProvider>
     </MotionProvider>
   )
@@ -101,6 +105,8 @@ function Shell() {
             <CheckoutPage />
           ) : route.name === "order" ? (
             <OrderPage />
+          ) : route.name === "account" ? (
+            <AccountPage />
           ) : (
             <Home />
           )}

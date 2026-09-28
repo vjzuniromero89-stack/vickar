@@ -63,10 +63,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ items, address }),
     }),
-  checkout: (items: CartItem[], address: Address, rateId: string) =>
+  /** Requires a signed-in customer: the server verifies the token and links the order to the account. */
+  checkout: (items: CartItem[], address: Address, rateId: string, token: string | null) =>
     request<{ url: string; number: string }>("/api/checkout", {
       method: "POST",
       body: JSON.stringify({ items, address, rateId }),
+      headers: token ? { authorization: `Bearer ${token}` } : undefined,
     }),
   order: (sessionId: string) => request<OrderSummary>(`/api/order?session_id=${encodeURIComponent(sessionId)}`),
 }

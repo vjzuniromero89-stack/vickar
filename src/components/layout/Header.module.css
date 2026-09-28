@@ -58,6 +58,7 @@
 }
 
 .search,
+.account,
 .bag,
 .menu {
   display: inline-flex;
@@ -101,8 +102,30 @@
 }
 
 .searchText,
-.kbd {
+.kbd,
+.accountText {
   display: none;
+}
+
+.account {
+  padding: 0 0.75rem;
+  color: var(--c-ink-soft);
+  transition:
+    color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out);
+}
+
+.account:hover {
+  color: var(--c-ink);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.accountText {
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-small);
 }
 
 .kbd {
@@ -146,7 +169,8 @@
   }
 
   .searchText,
-  .kbd {
+  .kbd,
+  .accountText {
     display: inline;
   }
 

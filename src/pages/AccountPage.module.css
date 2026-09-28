@@ -1,0 +1,185 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+  min-height: 80svh;
+  align-content: start;
+  padding-top: calc(var(--header-h) + var(--space-5));
+  padding-bottom: var(--space-6);
+}
+
+.centered {
+  justify-items: center;
+  align-content: center;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.orders,
+.side {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.side {
+  padding: var(--space-3);
+  border-radius: var(--radius-l);
+  background: var(--c-surface);
+  border: var(--hairline) solid var(--c-line);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+}
+
+.order {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-l);
+  background: var(--c-surface);
+  border: var(--hairline) solid var(--c-line);
+}
+
+.orderHead,
+.orderFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.orderNumber {
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.status {
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--c-raised);
+  color: var(--c-ink-soft);
+}
+
+.status[data-tone="warn"] {
+  background: rgb(255 122 69 / 0.16);
+  color: #ffb08f;
+}
+
+.status[data-tone="info"] {
+  background: rgb(143 216 255 / 0.15);
+  color: #b8e6ff;
+}
+
+.status[data-tone="ok"] {
+  background: rgb(198 244 50 / 0.15);
+  color: #d9f78a;
+}
+
+.items {
+  display: grid;
+  gap: 0.4rem;
+  list-style: none;
+  padding: var(--space-2) 0;
+  border-block: var(--hairline) solid var(--c-line);
+  font-size: var(--fs-small);
+}
+
+.items li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.empty {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: start;
+  padding: var(--space-4) var(--space-3);
+  border-radius: var(--radius-l);
+  border: var(--hairline) dashed var(--c-line-strong);
+}
+
+.skeleton {
+  height: 12rem;
+  border-radius: var(--radius-l);
+  background: linear-gradient(90deg, var(--c-surface), var(--c-raised), var(--c-surface));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.address {
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.error {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-m);
+  background: rgb(255 107 107 / 0.1);
+  border: var(--hairline) solid rgb(255 107 107 / 0.4);
+  color: #ffb3b3;
+  font-size: var(--fs-small);
+}
+
+.newPassword {
+  display: grid;
+  gap: var(--space-2);
+  width: min(100%, 26rem);
+  padding: var(--space-4) var(--space-3);
+  border-radius: var(--radius-l);
+  background: var(--c-surface);
+  border: var(--hairline) solid var(--c-line);
+}
+
+.newPassword label {
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.newPassword input {
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: var(--radius-m);
+  border: var(--hairline) solid var(--c-line-strong);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-size: 1rem;
+}

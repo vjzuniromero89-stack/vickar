@@ -11,6 +11,7 @@ export type Route =
   | { name: "product"; id: string }
   | { name: "checkout" }
   | { name: "order" }
+  | { name: "account" }
   | { name: "admin"; view: AdminView; id?: string }
 
 const parse = (hash: string): Route => {
@@ -18,6 +19,7 @@ const parse = (hash: string): Route => {
   if ((m = hash.match(/^#\/p\/([\w-]+)/))) return { name: "product", id: m[1] }
   if (hash.startsWith("#/checkout")) return { name: "checkout" }
   if (hash.startsWith("#/order")) return { name: "order" }
+  if (hash.startsWith("#/account")) return { name: "account" }
   if (hash.startsWith("#/admin")) {
     if ((m = hash.match(/^#\/admin\/products\/([\w-]+)/))) return { name: "admin", view: "product", id: m[1] }
     if (hash.startsWith("#/admin/products")) return { name: "admin", view: "products" }

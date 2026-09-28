@@ -141,9 +141,14 @@ export function OrderPage() {
         )}
       </div>
 
-      <button type="button" className="btn btn--primary" onClick={() => shop("all")}>
-        Continue shopping
-      </button>
+      <div className={styles.actions}>
+        <button type="button" className="btn btn--primary" onClick={() => shop("all")}>
+          Continue shopping
+        </button>
+        <a className="btn btn--ghost" href="#/account">
+          View all your orders
+        </a>
+      </div>
     </section>
   )
 }

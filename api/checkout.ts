@@ -7,6 +7,7 @@ import { getRates } from "./_lib/shipping.js"
 /**
  * POST /api/checkout  { items, address, rateId }  →  { url }
  *
+ * 0. Requires a signed-in customer (Supabase access token); the order is linked to that account.
  * 1. Re-prices the cart and re-quotes shipping on the server (the chosen rate must still exist).
  * 2. Saves a `pending` order in Supabase.
  * 3. Creates a Stripe Checkout Session for exactly those amounts and returns its URL.
@@ -15,8 +16,15 @@ import { getRates } from "./_lib/shipping.js"
 export function POST(request: Request) {
   return handle(async () => {
     const payments = stripe() // fails fast (clear 500) if Stripe isn't configured — before any order is written
+    const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1]
+    if (!token) throw new HttpError(401, "Please sign in to check out.")
+    const { data: auth, error: authError } = await db().auth.getUser(token)
+    const user = auth?.user
+    if (authError || !user?.email) throw new HttpError(401, "Your session expired. Please sign in again.")
+
     const body = await readJson<{ items: CartItemInput[]; address: Partial<Address>; rateId: string }>(request)
-    const address = validateAddress(body.address)
+    // The account email is the order email — never trust one sent by the browser
+    const address = validateAddress({ ...body.address, email: user.email })
     const { lines, subtotal } = await priceCart(body.items)
 
     const rates = await getRates(address, lines, subtotal)
@@ -30,6 +38,7 @@ export function POST(request: Request) {
       .from("orders")
       .insert({
         number,
+        user_id: user.id,
         status: "pending",
         email: address.email,
         customer_name: address.name,
