@@ -1,0 +1,39 @@
+.group {
+  display: flex;
+  gap: 0.15rem;
+  --chip: 14px;
+}
+
+.group[data-size="m"] {
+  --chip: 22px;
+  gap: 0.35rem;
+}
+
+/* 44px hit area around a small visual chip */
+.swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  margin-inline: -8px;
+}
+
+.group[data-size="m"] .swatch {
+  margin-inline: -4px;
+}
+
+.chip {
+  width: var(--chip);
+  height: var(--chip);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+}
+
+.ring {
+  position: absolute;
+  width: calc(var(--chip) + 8px);
+  height: calc(var(--chip) + 8px);
+  border-radius: 50%;
+  border: 1.5px solid var(--c-ink);
+}

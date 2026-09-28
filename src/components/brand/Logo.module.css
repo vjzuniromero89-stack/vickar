@@ -1,0 +1,28 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.word {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.26em;
+  /* tracking adds trailing space; pull it back so the lockup centres optically */
+  margin-right: -0.26em;
+}
+
+.mark {
+  flex: none;
+  overflow: visible;
+}
+
+/* Hover: the ember plane lifts a hair, like a page being turned */
+.ember {
+  transition: translate var(--dur-ui) var(--ease-out);
+}
+
+a:hover .ember,
+button:hover .ember {
+  translate: 0.6px -0.8px;
+}

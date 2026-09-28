@@ -1,0 +1,28 @@
+.art {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.art stop {
+  transition: stop-color 0.5s var(--ease-out);
+}
+
+.blueprint {
+  fill: none;
+  stroke: var(--art-line, var(--c-blueprint));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.line {
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.guide {
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}

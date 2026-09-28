@@ -1,0 +1,71 @@
+.page {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  max-width: 44rem;
+  min-height: 80svh;
+  align-content: center;
+  padding-top: calc(var(--header-h) + var(--space-5));
+  padding-bottom: var(--space-6);
+}
+
+.badge {
+  color: var(--c-ink-soft);
+}
+
+.badge[data-paid="true"] {
+  color: var(--c-success);
+}
+
+.copy {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-l);
+  background: var(--c-surface);
+  border: var(--hairline) solid var(--c-line);
+}
+
+.items {
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+  padding: 0;
+}
+
+.items li,
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.totals {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: var(--space-2);
+  border-top: var(--hairline) solid var(--c-line);
+}
+
+.totals dt {
+  color: var(--c-ink-soft);
+}
+
+.totals dd {
+  margin: 0;
+}
+
+.total {
+  font-weight: 600;
+  font-size: var(--fs-h3);
+}
+
+.total dt {
+  color: var(--c-ink);
+}

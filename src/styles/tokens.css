@@ -1,0 +1,120 @@
+/* ==========================================================================
+   VICKAR design tokens — universal store, "cinematic studio" direction.
+   Dark obsidian UI, light studio tiles for products, one ember accent,
+   blueprint cyan reserved for the technical/x-ray layer.
+   Layer 1 — primitives · Layer 2 — semantic (what components consume)
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Primitives: color ---- */
+  --obsidian-950: #0a0b0d;
+  --obsidian-900: #111316;
+  --obsidian-850: #16191d;
+  --obsidian-800: #1d2126;
+  --paper-50: #f3f2ef;
+  --paper-300: #a3a8ae;
+  --studio-100: #ecebe8;
+  --studio-200: #dedcd8;
+  --ember-500: #ff7a45;
+  --ember-600: #ff6428;
+  --blueprint-300: #8fd8ff;
+  --lime-400: #c6f432;
+
+  /* ---- Primitives: type ---- */
+  --font-sans: "Instrument Sans Variable", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Fraunces Variable", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* ---- Semantic: color ---- */
+  --c-bg: var(--obsidian-950);
+  --c-surface: var(--obsidian-900);
+  --c-surface-2: var(--obsidian-850);
+  --c-raised: var(--obsidian-800);
+  --c-ink: var(--paper-50);
+  --c-ink-soft: var(--paper-300);        /* ≈7.8:1 on bg */
+  --c-accent: var(--ember-500);          /* ≈7.4:1 on bg */
+  --c-accent-hover: var(--ember-600);
+  --c-on-accent: var(--obsidian-950);
+  --c-blueprint: var(--blueprint-300);
+  --c-studio: var(--studio-100);         /* product tiles */
+  --c-studio-2: var(--studio-200);
+  --c-on-studio: var(--obsidian-950);
+  --c-line: rgb(255 255 255 / 0.1);
+  --c-line-strong: rgb(255 255 255 / 0.2);
+  --c-glass: rgb(17 19 22 / 0.62);
+  --c-focus: var(--ember-500);
+  --c-success: var(--lime-400);
+
+  /* ---- Semantic: fluid type (375 → 1440) ---- */
+  --fs-mega: clamp(3.25rem, 1.4rem + 7.9vw, 8.75rem);
+  --fs-h1: clamp(2.5rem, 1.6rem + 3.8vw, 5rem);
+  --fs-h2: clamp(1.875rem, 1.35rem + 2.2vw, 3.25rem);
+  --fs-h3: clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.19vw, 1.0625rem);
+  --fs-small: 0.875rem;
+  --fs-label: 0.6875rem;
+
+  --lh-tight: 0.94;
+  --lh-heading: 1.05;
+  --lh-body: 1.55;
+  --tracking-display: -0.045em;
+  --tracking-label: 0.12em;
+
+  /* ---- Spacing ---- */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 6rem;
+  --space-7: 10rem;
+  --space-section: clamp(var(--space-6), 7vw + 2rem, var(--space-7));
+
+  /* ---- Layout ---- */
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 2rem);
+  --margin: clamp(1rem, -0.2rem + 5.1vw, 3.5rem);
+  --max-width: 1600px;
+  --cols: 4;
+  --header-h: 4.5rem;
+
+  /* ---- Shape ---- */
+  --radius-s: 8px;
+  --radius-m: 16px;
+  --radius-l: 28px;
+  --radius-pill: 999px;
+  --hairline: 1px;
+
+  /* ---- Layers ---- */
+  --z-header: 50;
+  --z-overlay: 49;
+  --z-modal: 80;
+  --z-drawer: 90;
+  --z-skip: 100;
+
+  /* ---- Motion (JS mirror: src/motion/tokens.ts) ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --dur-micro: 160ms;
+  --dur-ui: 280ms;
+  --dur-reveal: 800ms;
+
+  --tap-min: 44px;
+}
+
+@media (min-width: 768px) {
+  :root { --cols: 8; }
+}
+
+@media (min-width: 1024px) {
+  :root { --cols: 12; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 0ms;
+    --dur-ui: 120ms;
+    --dur-reveal: 200ms;
+  }
+}

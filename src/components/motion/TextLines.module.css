@@ -1,0 +1,15 @@
+.lines {
+  display: block;
+}
+
+.mask {
+  display: block;
+  overflow: hidden;
+  /* room for descenders / italic overhang without clipping */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.line {
+  display: block;
+}

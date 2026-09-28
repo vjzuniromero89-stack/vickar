@@ -1,0 +1,38 @@
+.item {
+  border-bottom: var(--hairline) solid var(--c-line);
+}
+
+.item h3 {
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 3.5rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.icon {
+  display: grid;
+  transition: transform var(--dur-ui) var(--ease-out);
+}
+
+.icon[data-open="true"] {
+  transform: rotate(45deg);
+}
+
+.panel {
+  overflow: hidden;
+}
+
+.content {
+  padding-bottom: var(--space-2);
+  color: var(--c-ink-soft);
+  font-size: var(--fs-small);
+}

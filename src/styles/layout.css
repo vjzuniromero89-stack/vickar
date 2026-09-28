@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Layout primitives — 4 / 8 / 12 column grid, sections, shared media rules
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--margin);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+
+/* <Picture> fills whatever frame it is placed in (frames own the aspect ratio) */
+.picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Shared pill buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap-min);
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out),
+    border-color var(--dur-micro) var(--ease-out);
+}
+
+.btn--primary {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--c-accent-hover);
+}
+
+.btn--ghost {
+  border: var(--hairline) solid var(--c-line-strong);
+  color: var(--c-ink);
+}
+
+.btn--ghost:hover {
+  border-color: var(--c-ink);
+}
+
+.btn--light {
+  background: var(--c-ink);
+  color: var(--c-bg);
+}
+
+.btn--light:hover {
+  background: var(--c-accent);
+}

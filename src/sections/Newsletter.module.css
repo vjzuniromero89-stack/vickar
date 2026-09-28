@@ -1,0 +1,104 @@
+.layout {
+  row-gap: var(--space-4);
+  padding: var(--space-5) var(--space-3);
+  border-radius: var(--radius-l);
+  background: radial-gradient(60% 90% at 90% 10%, rgb(255 122 69 / 0.18), transparent 60%), var(--c-surface);
+  border: var(--hairline) solid var(--c-line);
+  align-items: end;
+}
+
+.copy {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.copy h2 {
+  max-width: 14ch;
+}
+
+.formWrap {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.form {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  padding: 0.3rem 0.3rem 0.3rem 1.2rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--c-line-strong);
+  background: var(--c-bg);
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+
+.field:focus-within {
+  border-color: var(--c-accent);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  width: 0; /* intrinsic input width must not set the row width */
+  min-height: 3.25rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.125rem; /* ≥16px avoids iOS zoom */
+}
+
+.input:focus-visible {
+  outline: none;
+}
+
+.input[aria-invalid="true"] {
+  color: var(--c-accent-hover);
+}
+
+.submit {
+  min-height: var(--tap-min);
+  padding-inline: 1.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.submit:hover {
+  background: var(--c-accent-hover);
+}
+
+.error {
+  font-size: var(--fs-small);
+  color: var(--c-accent-hover);
+}
+
+.done {
+  font-size: var(--fs-h3);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .copy {
+    grid-column: 1 / span 6;
+  }
+
+  .formWrap {
+    grid-column: 8 / -1;
+  }
+}
